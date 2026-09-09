@@ -117,13 +117,25 @@ class ReviewService {
   }
 
   async getAll(query: ReviewQueryInput) {
-    const { page, limit, search, rating, sortBy, sortOrder } =
-      query;
+    const {
+      page,
+      limit,
+      search,
+      rating,
+      productId,
+      categoryId,
+      sortBy,
+      sortOrder,
+    } = query;
 
     const { skip, take } = getPagination(page, limit);
 
     const where = {
       ...(rating && { rating }),
+
+      ...(productId && { productId }),
+
+      ...(categoryId && { product: { categoryId } }),
 
       ...(search && {
         OR: [

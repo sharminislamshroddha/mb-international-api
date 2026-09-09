@@ -23,6 +23,10 @@ export const reviewIdParamsSchema = z.object({
 export const reviewQuerySchema = paginationSchema.extend({
   rating: z.coerce.number().int().min(1).max(5).optional(),
 
+  productId: z.string().optional(),
+
+  categoryId: z.string().optional(),
+
   sortBy: z.enum(["createdAt", "rating"]).default("createdAt"),
 });
 
