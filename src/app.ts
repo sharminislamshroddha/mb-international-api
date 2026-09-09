@@ -2,7 +2,9 @@ import Fastify from "fastify";
 
 import prisma from "./database/prisma";
 import routes from "./routes";
+import corsPlugin from "./plugins/cors";
 import errorHandler from "./plugins/error-handler";
+import jwtPlugin from "./plugins/jwt";
 
 export function buildApp() {
   const app = Fastify({
@@ -10,6 +12,9 @@ export function buildApp() {
   });
 
   errorHandler(app);
+
+  corsPlugin(app);
+  jwtPlugin(app);
 
   app.get("/health", async () => ({
     success: true,

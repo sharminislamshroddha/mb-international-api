@@ -4,10 +4,15 @@ import categoryRoutes from "../modules/category/category.routes";
 import brandRoutes from "../modules/brand/brand.routes";
 import productRoutes from "../modules/product/product.routes";
 import productImageRoutes from "../modules/product-image/product-image.routes";
+import authRoutes from "../modules/auth/auth.routes";
 
 export default async function routes(
     app: FastifyInstance
 ) {
+    app.register(authRoutes, {
+        prefix: "/api/v1/auth",
+    });
+
     app.register(categoryRoutes, {
         prefix: "/api/v1/categories",
     });
