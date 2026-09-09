@@ -116,6 +116,51 @@ class ReviewService {
     };
   }
 
+  async getAll(query: ReviewQueryInput) {
+    const { page, limit, rating, sortBy, sortOrder } = query;
+
+    const { skip, take } = getPagination(page, limit);
+
+    const where = {
+      ...(rating && { rating }),
+    };
+
+    const [reviews, total] = await Promise.all([
+      prisma.review.findMany({
+        where,
+        skip,
+        take,
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        include: {
+          ...reviewUserSelect,
+          product: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
+        },
+      }),
+
+      prisma.review.count({
+        where,
+      }),
+    ]);
+
+    return {
+      data: reviews,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
   async update(
     id: string,
     userId: string,

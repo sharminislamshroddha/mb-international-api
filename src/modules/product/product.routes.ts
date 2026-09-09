@@ -1,12 +1,18 @@
+import { Role } from "@prisma/client";
 import { FastifyInstance } from "fastify";
 
+import { requireRole } from "../../common/middlewares/require-role";
+
 import { productController } from "./product.controller";
+
+const adminOnly = requireRole(Role.ADMIN, Role.SUPER_ADMIN);
 
 export default async function productRoutes(
   app: FastifyInstance
 ) {
   app.post(
     "/",
+    { preHandler: adminOnly },
     productController.create
   );
 
@@ -22,11 +28,13 @@ export default async function productRoutes(
 
   app.patch(
     "/:id",
+    { preHandler: adminOnly },
     productController.update
   );
 
   app.delete(
     "/:id",
+    { preHandler: adminOnly },
     productController.delete
   );
 }

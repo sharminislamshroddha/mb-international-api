@@ -1,4 +1,4 @@
-import { PrismaClient, ProductStatus } from "@prisma/client";
+import { PrismaClient, ProductStatus, Role } from "@prisma/client";
 import bcrypt from "bcrypt";
 
 import { generateSlug } from "../src/shared/helpers/slug";
@@ -330,6 +330,21 @@ const DEMO_USERS = [
 
 const DEMO_PASSWORD = "password123";
 
+const ADMIN_USERS = [
+  {
+    email: "superadmin@mbinternational.com",
+    firstName: "Super",
+    lastName: "Admin",
+    role: Role.SUPER_ADMIN,
+  },
+  {
+    email: "admin@mbinternational.com",
+    firstName: "Store",
+    lastName: "Admin",
+    role: Role.ADMIN,
+  },
+];
+
 const REVIEW_TEMPLATES: {
   sku: string;
   rating: number;
@@ -545,6 +560,22 @@ async function seedUsers() {
     });
 
     userIds.set(user.email, record.id);
+  }
+
+  for (const admin of ADMIN_USERS) {
+    const record = await prisma.user.upsert({
+      where: { email: admin.email },
+      update: { role: admin.role },
+      create: {
+        email: admin.email,
+        password: hashedPassword,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        role: admin.role,
+      },
+    });
+
+    userIds.set(admin.email, record.id);
   }
 
   return userIds;

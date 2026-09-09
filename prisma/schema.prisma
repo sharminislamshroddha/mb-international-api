@@ -17,6 +17,7 @@ enum ProductStatus {
 enum Role {
   CUSTOMER
   ADMIN
+  SUPER_ADMIN
 }
 
 enum AuthProvider {

@@ -1,4 +1,4 @@
-import { AuthProvider, User } from "@prisma/client";
+import { AuthProvider } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { OAuth2Client } from "google-auth-library";
 
@@ -6,6 +6,7 @@ import { env } from "../../config/env";
 import prisma from "../../database/prisma";
 
 import { AppError } from "../../shared/errors/AppError";
+import { sanitizeUser } from "../../shared/helpers/sanitize-user";
 
 import {
   FacebookAuthInput,
@@ -19,20 +20,6 @@ const SALT_ROUNDS = 10;
 const googleClient = env.GOOGLE_CLIENT_ID
   ? new OAuth2Client(env.GOOGLE_CLIENT_ID)
   : null;
-
-function sanitizeUser(user: User) {
-  return {
-    id: user.id,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    phone: user.phone,
-    role: user.role,
-    isActive: user.isActive,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  };
-}
 
 interface OAuthProfile {
   email: string;

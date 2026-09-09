@@ -61,6 +61,21 @@ class ReviewController {
     });
   }
 
+  async getAll(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) {
+    const query = reviewQuerySchema.parse(request.query);
+
+    const result = await reviewService.getAll(query);
+
+    return reply.send({
+      success: true,
+      message: "Reviews fetched successfully.",
+      ...result,
+    });
+  }
+
   async update(
     request: FastifyRequest,
     reply: FastifyReply
@@ -94,11 +109,11 @@ class ReviewController {
       request.params
     );
 
-    await reviewService.delete(
-      id,
-      request.user.id,
-      request.user.role === Role.ADMIN
-    );
+    const isAdmin =
+      request.user.role === Role.ADMIN ||
+      request.user.role === Role.SUPER_ADMIN;
+
+    await reviewService.delete(id, request.user.id, isAdmin);
 
     return successResponse({
       reply,
