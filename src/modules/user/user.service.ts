@@ -31,7 +31,10 @@ class UserService {
         ],
       }),
 
-      ...(role && { role }),
+      ...(role &&
+        role.length > 0 && {
+          role: role.length === 1 ? role[0] : { in: role },
+        }),
 
       ...(isActive !== undefined && { isActive }),
     };

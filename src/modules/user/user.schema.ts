@@ -3,8 +3,20 @@ import { z } from "zod";
 
 import { paginationSchema } from "../../shared/validators";
 
+const ROLE_VALUES = Object.values(Role);
+
 export const userQuerySchema = paginationSchema.extend({
-  role: z.enum(Role).optional(),
+  role: z
+    .string()
+    .optional()
+    .transform((value) =>
+      value
+        ?.split(",")
+        .map((entry) => entry.trim())
+        .filter((entry): entry is Role =>
+          ROLE_VALUES.includes(entry as Role)
+        )
+    ),
 
   isActive: z.coerce.boolean().optional(),
 
