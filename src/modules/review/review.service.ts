@@ -164,7 +164,8 @@ class ReviewService {
   async update(
     id: string,
     userId: string,
-    data: UpdateReviewInput
+    data: UpdateReviewInput,
+    isAdmin = false
   ) {
     const review = await prisma.review.findUnique({
       where: {
@@ -176,7 +177,7 @@ class ReviewService {
       throw new AppError(404, "Review not found.");
     }
 
-    if (review.userId !== userId) {
+    if (review.userId !== userId && !isAdmin) {
       throw new AppError(
         403,
         "You can only update your own review."

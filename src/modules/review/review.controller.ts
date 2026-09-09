@@ -14,6 +14,10 @@ import {
 
 import { reviewService } from "./review.service";
 
+function isAdminRole(role: Role) {
+  return role === Role.ADMIN || role === Role.SUPER_ADMIN;
+}
+
 class ReviewController {
   async create(
     request: FastifyRequest,
@@ -91,7 +95,8 @@ class ReviewController {
     const review = await reviewService.update(
       id,
       request.user.id,
-      payload
+      payload,
+      isAdminRole(request.user.role)
     );
 
     return successResponse({
@@ -109,11 +114,11 @@ class ReviewController {
       request.params
     );
 
-    const isAdmin =
-      request.user.role === Role.ADMIN ||
-      request.user.role === Role.SUPER_ADMIN;
-
-    await reviewService.delete(id, request.user.id, isAdmin);
+    await reviewService.delete(
+      id,
+      request.user.id,
+      isAdminRole(request.user.role)
+    );
 
     return successResponse({
       reply,
