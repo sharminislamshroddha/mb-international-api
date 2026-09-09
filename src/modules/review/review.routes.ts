@@ -36,6 +36,12 @@ export async function reviewSelfRoutes(
     reviewController.update
   );
 
+  app.patch(
+    "/:id/publish",
+    { preHandler: requireRole(Role.ADMIN, Role.SUPER_ADMIN) },
+    reviewController.setPublished
+  );
+
   app.delete(
     "/:id",
     { preHandler: authenticate },

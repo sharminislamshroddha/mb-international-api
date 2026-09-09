@@ -9,6 +9,7 @@ import {
   reviewIdParamsSchema,
   reviewProductParamsSchema,
   reviewQuerySchema,
+  updateReviewPublishedSchema,
   updateReviewSchema,
 } from "./review.schema";
 
@@ -102,6 +103,32 @@ class ReviewController {
     return successResponse({
       reply,
       message: "Review updated successfully.",
+      data: review,
+    });
+  }
+
+  async setPublished(
+    request: FastifyRequest,
+    reply: FastifyReply
+  ) {
+    const { id } = reviewIdParamsSchema.parse(
+      request.params
+    );
+
+    const { isPublished } = updateReviewPublishedSchema.parse(
+      request.body
+    );
+
+    const review = await reviewService.setPublished(
+      id,
+      isPublished
+    );
+
+    return successResponse({
+      reply,
+      message: isPublished
+        ? "Review published successfully."
+        : "Review unpublished successfully.",
       data: review,
     });
   }

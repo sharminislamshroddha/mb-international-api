@@ -86,6 +86,7 @@ class ReviewService {
 
     const where = {
       productId,
+      isPublished: true,
       ...(rating && { rating }),
     };
 
@@ -124,6 +125,7 @@ class ReviewService {
       rating,
       productId,
       categoryId,
+      isPublished,
       sortBy,
       sortOrder,
     } = query;
@@ -136,6 +138,8 @@ class ReviewService {
       ...(productId && { productId }),
 
       ...(categoryId && { product: { categoryId } }),
+
+      ...(isPublished !== undefined && { isPublished }),
 
       ...(search && {
         OR: [
@@ -246,11 +250,40 @@ class ReviewService {
       );
     }
 
+    // A customer editing their own review sends it back for
+    // re-moderation instead of leaving the previously-approved
+    // content live under a since-edited comment.
     const updated = await prisma.review.update({
       where: {
         id,
       },
-      data,
+      data: isAdmin ? data : { ...data, isPublished: false },
+      include: reviewUserSelect,
+    });
+
+    await this.syncProductRating(review.productId);
+
+    return updated;
+  }
+
+  async setPublished(id: string, isPublished: boolean) {
+    const review = await prisma.review.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!review) {
+      throw new AppError(404, "Review not found.");
+    }
+
+    const updated = await prisma.review.update({
+      where: {
+        id,
+      },
+      data: {
+        isPublished,
+      },
       include: reviewUserSelect,
     });
 
@@ -294,6 +327,7 @@ class ReviewService {
     const aggregate = await prisma.review.aggregate({
       where: {
         productId,
+        isPublished: true,
       },
       _avg: {
         rating: true,

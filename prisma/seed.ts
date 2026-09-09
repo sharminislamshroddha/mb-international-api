@@ -605,6 +605,7 @@ async function seedReviews(
         rating: template.rating,
         title: template.title,
         comment: template.comment,
+        isPublished: true,
       },
       create: {
         productId,
@@ -612,13 +613,14 @@ async function seedReviews(
         rating: template.rating,
         title: template.title,
         comment: template.comment,
+        isPublished: true,
       },
     });
   }
 
   for (const productId of touchedProductIds) {
     const aggregate = await prisma.review.aggregate({
-      where: { productId },
+      where: { productId, isPublished: true },
       _avg: { rating: true },
       _count: { rating: true },
     });
