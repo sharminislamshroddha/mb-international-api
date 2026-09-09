@@ -117,12 +117,62 @@ class ReviewService {
   }
 
   async getAll(query: ReviewQueryInput) {
-    const { page, limit, rating, sortBy, sortOrder } = query;
+    const { page, limit, search, rating, sortBy, sortOrder } =
+      query;
 
     const { skip, take } = getPagination(page, limit);
 
     const where = {
       ...(rating && { rating }),
+
+      ...(search && {
+        OR: [
+          {
+            title: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            comment: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            product: {
+              name: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
+          },
+          {
+            user: {
+              firstName: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
+          },
+          {
+            user: {
+              lastName: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
+          },
+          {
+            user: {
+              email: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
+          },
+        ],
+      }),
     };
 
     const [reviews, total] = await Promise.all([
