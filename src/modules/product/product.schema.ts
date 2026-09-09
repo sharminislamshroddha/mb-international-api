@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { ProductStatus } from "@prisma/client";
 
-import { paginationSchema } from "../../shared/validators";
+import { booleanQueryParam, paginationSchema } from "../../shared/validators";
 
 export const createProductSchema = z.object({
   categoryId: z.string().min(1),
@@ -56,9 +56,13 @@ export const productQuerySchema =
       .enum(ProductStatus)
       .optional(),
 
-    isFeatured: z.coerce.boolean().optional(),
+    isFeatured: booleanQueryParam,
 
-    isActive: z.coerce.boolean().optional(),
+    isActive: booleanQueryParam,
+
+    minPrice: z.coerce.number().min(0).optional(),
+
+    maxPrice: z.coerce.number().min(0).optional(),
 
     sortBy: z
       .enum([

@@ -82,6 +82,8 @@ class ProductService {
       status,
       isFeatured,
       isActive,
+      minPrice,
+      maxPrice,
       sortBy,
       sortOrder,
     } = query;
@@ -90,10 +92,26 @@ class ProductService {
 
     const where = {
       ...(search && {
-        name: {
-          contains: search,
-          mode: "insensitive" as const,
-        },
+        OR: [
+          {
+            name: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            sku: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            shortDescription: {
+              contains: search,
+              mode: "insensitive" as const,
+            },
+          },
+        ],
       }),
 
       ...(categoryId && { categoryId }),
@@ -108,6 +126,13 @@ class ProductService {
 
       ...(isActive !== undefined && {
         isActive,
+      }),
+
+      ...((minPrice !== undefined || maxPrice !== undefined) && {
+        price: {
+          ...(minPrice !== undefined && { gte: minPrice }),
+          ...(maxPrice !== undefined && { lte: maxPrice }),
+        },
       }),
     };
 
