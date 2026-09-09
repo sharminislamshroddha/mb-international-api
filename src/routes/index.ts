@@ -8,6 +8,7 @@ import authRoutes from "../modules/auth/auth.routes";
 import reviewRoutes, { reviewSelfRoutes } from "../modules/review/review.routes";
 import userRoutes from "../modules/user/user.routes";
 import dashboardRoutes from "../modules/dashboard/dashboard.routes";
+import uploadRoutes from "../modules/upload/upload.routes";
 
 export default async function routes(
     app: FastifyInstance
@@ -46,6 +47,10 @@ export default async function routes(
 
     app.register(dashboardRoutes, {
         prefix: "/api/v1/dashboard",
+    });
+
+    app.register(uploadRoutes, {
+        prefix: "/api/v1/uploads",
     });
 
 }

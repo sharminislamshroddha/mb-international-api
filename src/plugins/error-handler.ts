@@ -22,6 +22,19 @@ export default async function errorHandler(app: FastifyInstance) {
       });
     }
 
+    if (
+      error instanceof Error &&
+      "statusCode" in error &&
+      typeof error.statusCode === "number" &&
+      error.statusCode >= 400 &&
+      error.statusCode < 500
+    ) {
+      return reply.status(error.statusCode).send({
+        success: false,
+        message: error.message,
+      });
+    }
+
     return reply.status(500).send({
       success: false,
       message: "Internal server error.",
