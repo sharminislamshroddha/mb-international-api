@@ -18,6 +18,18 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+export const googleAuthSchema = z.object({
+  idToken: z.string().min(1),
+});
+
+export const facebookAuthSchema = z.object({
+  accessToken: z.string().min(1),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 
 export type LoginInput = z.infer<typeof loginSchema>;
+
+export type GoogleAuthInput = z.infer<typeof googleAuthSchema>;
+
+export type FacebookAuthInput = z.infer<typeof facebookAuthSchema>;

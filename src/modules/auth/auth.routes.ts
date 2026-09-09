@@ -11,6 +11,10 @@ export default async function authRoutes(
 
   app.post("/login", authController.login);
 
+  app.post("/google", authController.google);
+
+  app.post("/facebook", authController.facebook);
+
   app.get(
     "/me",
     { preHandler: authenticate },
