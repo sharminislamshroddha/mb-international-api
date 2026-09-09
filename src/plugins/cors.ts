@@ -7,5 +7,6 @@ export default async function corsPlugin(app: FastifyInstance) {
   app.register(fastifyCors, {
     origin: env.CORS_ORIGIN,
     credentials: true,
+    methods: ["GET", "HEAD", "POST", "PATCH", "PUT", "DELETE"],
   });
 }
